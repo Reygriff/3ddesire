@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>3D Print Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+body{
+    margin:0;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:#fff;
+}
+
+/* HEADER */
+header{
+    padding:25px;
+    text-align:center;
+    background:rgba(0,0,0,0.3);
+    backdrop-filter:blur(10px);
+}
+header h1{margin:0;font-size:2.2em;}
+header p{opacity:.8;}
+
+/* PRODUCTS */
+.container{
+    padding:30px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:25px;
+}
+.card{
+    background:#1e1f22;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+    transition:.3s;
+}
+.card:hover{transform:translateY(-8px);}
+.card img{
+    width:100%;
+    height:180px;
+    border-radius:12px;
+}
+.card h2{margin:15px 0 5px;}
+.price{color:#00ffcc;margin-bottom:10px;}
+.card button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#00ffcc;
+    cursor:pointer;
+}
+.card button:hover{background:#00cca3;}
+
+/* MODAL */
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+.modal-box{
+    background:#1e1f22;
+    padding:25px;
+    border-radius:15px;
+    width:90%;
+    max-width:350px;
+}
+.modal-box input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:8px;
+    border:none;
+}
+.modal-box button{
+    width:100%;
+    margin-top:15px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#00ffcc;
+}
+.close{text-align:right;cursor:pointer;opacity:.6;}
+.close:hover{opacity:1;}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🖨️ 3D Print Store</h1>
+<p>Custom & high-quality 3D printed products</p>
+</header>
+
+<section class="container">
+
+<!-- SVG PLACEHOLDER -->
+<script>
+const img = t => `data:image/svg+xml;utf8,
+<svg xmlns='http://www.w3.org/2000/svg' width='400' height='240'>
+<defs>
+<linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+<stop offset='0%' stop-color='%2300ffcc'/>
+<stop offset='100%' stop-color='%232c5364'/>
+</linearGradient>
+</defs>
+<rect width='100%' height='100%' fill='url(%23g)'/>
+<text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle'
+font-size='26' fill='black' font-family='Arial'>${t}</text>
+</svg>`;
+</script>
+
+<div class="card"><img id="i1"><h2>Phone Stand</h2><div class="price">₹299</div><button onclick="buy('3D Phone Stand','₹299')">Buy Now</button></div>
+<div class="card"><img id="i2"><h2>Mini Statue</h2><div class="price">₹599</div><button onclick="buy('Mini 3D Statue','₹599')">Buy Now</button></div>
+<div class="card"><img id="i3"><h2>Keychain</h2><div class="price">₹199</div><button onclick="buy('Custom Keychain','₹199')">Buy Now</button></div>
+<div class="card"><img id="i4"><h2>Desk Organizer</h2><div class="price">₹749</div><button onclick="buy('Desk Organizer','₹749')">Buy Now</button></div>
+<div class="card"><img id="i5"><h2>Headphone Stand</h2><div class="price">₹899</div><button onclick="buy('Headphone Stand','₹899')">Buy Now</button></div>
+<div class="card"><img id="i6"><h2>Pen Holder</h2><div class="price">₹249</div><button onclick="buy('Pen Holder','₹249')">Buy Now</button></div>
+<div class="card"><img id="i7"><h2>Plant Pot</h2><div class="price">₹349</div><button onclick="buy('Plant Pot','₹349')">Buy Now</button></div>
+<div class="card"><img id="i8"><h2>Laptop Stand</h2><div class="price">₹1299</div><button onclick="buy('Laptop Stand','₹1299')">Buy Now</button></div>
+<div class="card"><img id="i9"><h2>Cable Organizer</h2><div class="price">₹199</div><button onclick="buy('Cable Organizer','₹199')">Buy Now</button></div>
+<div class="card"><img id="i10"><h2>Wall Hooks</h2><div class="price">₹299</div><button onclick="buy('Wall Hooks','₹299')">Buy Now</button></div>
+<div class="card"><img id="i11"><h2>Controller Stand</h2><div class="price">₹699</div><button onclick="buy('Controller Stand','₹699')">Buy Now</button></div>
+<div class="card"><img id="i12"><h2>Tool Holder</h2><div class="price">₹499</div><button onclick="buy('Tool Holder','₹499')">Buy Now</button></div>
+
+</section>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+<div class="modal-box">
+<div class="close" onclick="closeModal()">✖</div>
+<h3 id="productName"></h3>
+<p id="productPrice"></p>
+<input type="tel" id="phone" placeholder="Enter mobile number">
+<button onclick="sendMail()">Confirm Purchase</button>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+emailjs.init("ifgDhS_mqY7V37x4N");
+
+let selectedProduct = "";
+let selectedPrice = "";
+
+function buy(name, price){
+    selectedProduct = name;
+    selectedPrice = price;
+    document.getElementById("productName").innerText = name;
+    document.getElementById("productPrice").innerText = "Price: " + price;
+    document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal(){
+    document.getElementById("modal").style.display = "none";
+}
+
+function sendMail(){
+    const phoneValue = document.getElementById("phone").value.trim();
+
+    if(phoneValue === ""){
+        alert("Please enter your mobile number");
+        return;
+    }
+
+    emailjs.send("service_nh87rif", "template_mxkitkh", {
+        product: selectedProduct,
+        price: selectedPrice,
+        phone: phoneValue
+    })
+    .then(() => {
+        alert("Order sent successfully!");
+        document.getElementById("phone").value = "";
+        closeModal();
+    })
+    .catch(error => {
+        alert("Failed to send order");
+        console.error("EmailJS error:", error);
+    });
+}
+</script>
+
+
+</body>
+</html>
